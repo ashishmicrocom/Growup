@@ -30,7 +30,9 @@ app.use(cors({
   origin: [
     process.env.CLIENT_URL || 'http://localhost:8080',
     'http://localhost:8081', 
-    'http://localhost:8082'
+    'http://localhost:8082',
+    'https://flourisel.netlify.app',
+    'https://flourisel-admin.netlify.app'
   ],
   credentials: true
 }));
