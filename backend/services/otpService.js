@@ -7,7 +7,7 @@ import crypto from 'crypto';
 export const generateOTP = () => {
   // Use default OTP when SMTP is not configured (for production without email service)
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.log('⚠️ SMTP not configured - using default OTP: 000000');
+    console.log('SMTP not configured - using default OTP: 000000');
     return '000000';
   }
   return crypto.randomInt(100000, 999999).toString();
