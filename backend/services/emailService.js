@@ -224,8 +224,9 @@ export const sendOrderConfirmationEmail = async (orderData) => {
 export const sendOTPEmail = async (email, otp, name, purpose = 'registration') => {
   // Check if SMTP is properly configured
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.warn('SMTP not configured - email sending disabled');
-    return { success: true, message: 'Email service not configured' };
+    console.warn('⚠️ SMTP not configured - email sending disabled. Using default OTP: 000000');
+    console.log(`📧 Would have sent OTP to ${email}: ${otp}`);
+    return { success: true, message: 'Email service not configured - using default OTP 000000' };
   }
 
   try {
