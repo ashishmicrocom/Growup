@@ -296,6 +296,13 @@ export const login = async (req, res) => {
     const otpExpiry = getOTPExpiry();
     const hashedOTP = hashOTP(otp);
 
+    console.log('Login - Saving OTP:', {
+      email: email,
+      generatedOTP: otp,
+      hashedOTP: hashedOTP,
+      otpExpiry: otpExpiry
+    });
+
     await User.findByIdAndUpdate(user._id, {
       otp: hashedOTP,
       otpExpiry: otpExpiry
@@ -353,9 +360,19 @@ export const verifyLoginOTP = async (req, res) => {
 
     // Verify OTP
     const hashedOTP = hashOTP(otp);
+    console.log('Login OTP Verification Debug:', {
+      providedOTP: otp,
+      hashedProvidedOTP: hashedOTP,
+      storedOTP: user.otp,
+      storedExpiry: user.otpExpiry,
+      currentTime: new Date(),
+      isExpired: user.otpExpiry ? new Date() > new Date(user.otpExpiry) : 'No expiry set'
+    });
+    
     const otpVerification = verifyOTP(user.otp, user.otpExpiry, hashedOTP);
 
     if (!otpVerification.valid) {
+      console.log('Login OTP verification failed:', otpVerification.message);
       return res.status(400).json({
         success: false,
         message: otpVerification.message
