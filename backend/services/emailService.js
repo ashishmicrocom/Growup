@@ -222,9 +222,9 @@ export const sendOrderConfirmationEmail = async (orderData) => {
 
 // Send OTP email for registration verification
 export const sendOTPEmail = async (email, otp, name, purpose = 'registration') => {
-  // Check if SMTP is properly configured
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.warn('SMTP not configured - email sending disabled. Using default OTP: 000000');
+  // Check if default OTP is being used or SMTP is not configured
+  if (process.env.USE_DEFAULT_OTP === 'true' || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn('Email service disabled - using default OTP: 000000');
     console.log(`Would have sent OTP to ${email}: ${otp}`);
     return { success: true, message: 'Email service not configured - using default OTP 000000' };
   }
@@ -301,7 +301,8 @@ export const sendOTPEmail = async (email, otp, name, purpose = 'registration') =
     await transporter.sendMail(mailOptions);
     return { success: true, message: 'OTP email sent successfully' };
   } catch (error) {
-    console.error('OTP email sending error:', error);
+    console.error('OTP email sending error:', error.message);
+    // Return error instead of throwing to allow graceful handling
     throw new Error('Failed to send OTP email: ' + error.message);
   }
 };

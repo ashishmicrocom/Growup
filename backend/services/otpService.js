@@ -2,12 +2,12 @@ import crypto from 'crypto';
 
 /**
  * Generate a 6-digit OTP
- * If SMTP is not configured, returns default OTP '000000'
+ * If SMTP is not configured or USE_DEFAULT_OTP is enabled, returns default OTP '000000'
  */
 export const generateOTP = () => {
-  // Use default OTP when SMTP is not configured (for production without email service)
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.log('SMTP not configured - using default OTP: 000000');
+  // Use default OTP when explicitly enabled OR when SMTP is not configured
+  if (process.env.USE_DEFAULT_OTP === 'true' || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.log('Using default OTP: 000000');
     return '000000';
   }
   return crypto.randomInt(100000, 999999).toString();

@@ -64,7 +64,11 @@ export const register = async (req, res) => {
       storePendingRegistration(email, pendingData, hashedOTP, otpExpiry);
       
       // Resend OTP
-      await sendOTPEmail(email, otp, pendingData.firstName || firstName, 'registration');
+      try {
+        await sendOTPEmail(email, otp, pendingData.firstName || firstName, 'registration');
+      } catch (emailError) {
+        console.warn('Email sending failed, but continuing with default OTP:', emailError.message);
+      }
       
       return res.status(200).json({
         success: true,
@@ -106,7 +110,11 @@ export const register = async (req, res) => {
     }, hashedOTP, otpExpiry);
 
     // Send OTP email
-    await sendOTPEmail(email, otp, firstName, 'registration');
+    try {
+      await sendOTPEmail(email, otp, firstName, 'registration');
+    } catch (emailError) {
+      console.warn('Email sending failed, but continuing with default OTP:', emailError.message);
+    }
 
     res.status(201).json({
       success: true,
@@ -294,7 +302,11 @@ export const login = async (req, res) => {
     });
 
     // Send OTP email
-    await sendOTPEmail(email, otp, user.firstName, 'login');
+    try {
+      await sendOTPEmail(email, otp, user.firstName, 'login');
+    } catch (emailError) {
+      console.warn('Email sending failed, but continuing with default OTP:', emailError.message);
+    }
 
     res.json({
       success: true,
@@ -700,7 +712,11 @@ export const resendOTP = async (req, res) => {
       storePendingRegistration(email, pendingData, hashedOTP, otpExpiry);
 
       // Send OTP email
-      await sendOTPEmail(email, otp, pendingData.firstName, purpose);
+      try {
+        await sendOTPEmail(email, otp, pendingData.firstName, purpose);
+      } catch (emailError) {
+        console.warn('Email sending failed, but continuing with default OTP:', emailError.message);
+      }
     } else {
       // For login or forgot password - user exists in database
       const user = await User.findOne({ email });
@@ -723,7 +739,11 @@ export const resendOTP = async (req, res) => {
       });
 
       // Send OTP email
-      await sendOTPEmail(email, otp, user.firstName, purpose || 'login');
+      try {
+        await sendOTPEmail(email, otp, user.firstName, purpose || 'login');
+      } catch (emailError) {
+        console.warn('Email sending failed, but continuing with default OTP:', emailError.message);
+      }
     }
 
     res.json({
@@ -774,7 +794,11 @@ export const forgotPassword = async (req, res) => {
     });
 
     // Send OTP email
-    await sendOTPEmail(email, otp, user.firstName, 'forgot-password');
+    try {
+      await sendOTPEmail(email, otp, user.firstName, 'forgot-password');
+    } catch (emailError) {
+      console.warn('Email sending failed, but continuing with default OTP:', emailError.message);
+    }
 
     res.json({
       success: true,
